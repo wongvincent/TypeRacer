@@ -1,3 +1,3 @@
 # TypeRacer
 
-https://jsfiddle.net/ah0penL9/
+https://pusheenracer.herokuapp.com/

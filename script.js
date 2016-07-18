@@ -15,7 +15,7 @@ var globalTimer;
 function startTimer() {
     var start = new Date;
     globalTimer = setInterval(function() {
-        $('#timer').text(((new Date - start) / parseFloat(1000)).toFixed(2) + " Seconds");
+        $('#timer').text(((new Date - start) / parseFloat(1000)).toFixed(3) + " Seconds");
     }, 1);
 }
 
