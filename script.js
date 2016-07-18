@@ -5,7 +5,6 @@ $.ajax({
 });
 
 function generateWords(response) {
-    startTimer();
     placeWordsOnScreen(response.map(function(obj){
         return obj.word;
     }));
@@ -23,7 +22,6 @@ function startTimer() {
 function updateWordsRemaining(i, arrayOfWords) {
     $('#numberOfWordsRemaining').text(arrayOfWords.length - i);
     if (i === arrayOfWords.length) {
-        console.log(globalTimer);
         clearInterval(globalTimer);
         var timeStoppedAt = $('#timer').text();
         $('#timer').text("You finished in " + timeStoppedAt);
