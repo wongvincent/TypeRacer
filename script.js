@@ -38,24 +38,30 @@ function WPM() {
     $('#wpm').text(0);
     this.wordCounter = 0;
     this.setWPMText = function() {
-        $('#wpm').text(this.wordCounter / timer.getSeconds() * 60);
+        $('#wpm').text((this.wordCounter / timer.getSeconds() * 60).toFixed(2));
     }
 }
 
 function placeWordsOnScreen(toBeTyped) {
+    var input = $('#inputtext');
     $(function () {
-        $('#inputtext').focus();
-        $('#typethis').text(toBeTyped.join(" "));
+        input.focus();
+        toBeTyped.forEach(function(word) {
+            $('#typethis').append('<span>' + word + ' </span>');
+        });
+        var wordList = [].slice.call(document.getElementById('typethis').getElementsByTagName('*'));
+        console.log(wordList);
+        console.log(toBeTyped);
         var wpm = new WPM();
         updateWordsRemaining(toBeTyped.length);
-
-
-        $('#inputtext').on('input', function () {
+        input.on('input', function () {
             var matchThisWord = toBeTyped.length > 1 ? toBeTyped[0] + " " : toBeTyped[0];
-            if ($('#inputtext').val() === matchThisWord) {
+            if (input.val() === matchThisWord) {
                 wpm.wordCounter += toBeTyped.length > 1 ? ((matchThisWord.length-1)/5) : (matchThisWord.length/5);
                 wpm.setWPMText();
-                $('#inputtext').val('');
+                input.val('');
+                wordList[0].style.color = 'DarkGreen';
+                wordList.shift();
                 toBeTyped.shift();
                 updateWordsRemaining(toBeTyped.length);
             }
