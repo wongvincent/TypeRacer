@@ -49,21 +49,22 @@ function placeWordsOnScreen(toBeTyped) {
         toBeTyped.forEach(function(word) {
             $('#typethis').append('<span>' + word + ' </span>');
         });
-        var wordList = [].slice.call(document.getElementById('typethis').getElementsByTagName('*'));
-        console.log(wordList);
-        console.log(toBeTyped);
         var wpm = new WPM();
         updateWordsRemaining(toBeTyped.length);
         input.on('input', function () {
             var matchThisWord = toBeTyped.length > 1 ? toBeTyped[0] + " " : toBeTyped[0];
-            if (input.val() === matchThisWord) {
-                wpm.wordCounter += toBeTyped.length > 1 ? ((matchThisWord.length-1)/5) : (matchThisWord.length/5);
+            var currentInput = input.val();
+            if (currentInput === matchThisWord) {
+                wpm.wordCounter += toBeTyped.length > 1 ? ((matchThisWord.length - 1) / 5) : (matchThisWord.length / 5);
                 wpm.setWPMText();
                 input.val('');
-                wordList[0].style.color = 'DarkGreen';
-                wordList.shift();
+                $("#typethis span:not('.completed-word'):first").addClass("completed-word");
                 toBeTyped.shift();
                 updateWordsRemaining(toBeTyped.length);
+            } else if (matchThisWord.indexOf(currentInput) === 0) {
+                input.removeClass("has-typo");
+            } else {
+                input.addClass("has-typo");
             }
         });
 
