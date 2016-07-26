@@ -1,16 +1,51 @@
+var globalTimer;
+var noOfWords = 100;
+var requestSize = noOfWords + 5;
+
 $.ajax({
-    url: '//api.wordnik.com/v4/words.json/randomWords?hasDictionaryDef=true&minCorpusCount=1000&minLength=3&maxLength=10&limit=10&api_key=ef6dd4f5820f0ae33a0030485610961d4cf34d215edd3293f',
+    url: '//api.wordnik.com/v4/words.json/randomWords?hasDictionaryDef=true&minCorpusCount=1000&minLength=3&maxLength=10&limit=' + requestSize + '&api_key=ef6dd4f5820f0ae33a0030485610961d4cf34d215edd3293f',
     dataType: 'jsonp',
     jsonpCallback: 'generateWords'
 });
 
 function generateWords(response) {
-    placeWordsOnScreen(response.map(function(obj){
-        return obj.word;
-    }));
-}
+    var validWords = [];
+    for(var i=0; i<response.length; i++) {
+        if(isValid(response[i].word)) {
+            validWords.push(response[i].word);
+        }
+        if(validWords.length === noOfWords) {
+            placeWordsOnScreen(validWords);
+            break;
+        }
+        if(i === response.length-1) {
+            getRemainingWords();
+            function getRemainingWords() {
+                var requestSize = noOfWords - validWords.length;
+                $.ajax({
+                    url: '//api.wordnik.com/v4/words.json/randomWords?hasDictionaryDef=true&minCorpusCount=1000&minLength=3&maxLength=10&limit=' + requestSize + '&api_key=ef6dd4f5820f0ae33a0030485610961d4cf34d215edd3293f',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'checkArrayLength' //$.done generates this
+                }).done(function(response){
+                    response.forEach(function(val) {
+                        if(isValid(val.word)){
+                            validWords.push(val.word);
+                        }
+                    });
+                    if(validWords.length < noOfWords) {
+                        getRemainingWords();
+                    } else {
+                        placeWordsOnScreen(validWords);
+                    }
+                });
+            }
+        }
+    }
 
-var globalTimer;
+    function isValid(word) {
+        return /^[a-zA-Z\-']+$/.test(word);
+    }
+}
 
 function Timer() {
     var start = new Date;
